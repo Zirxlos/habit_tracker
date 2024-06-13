@@ -1,5 +1,6 @@
 import sqlite3
-from datetime import date
+from datetime import datetime
+from habit import Habit
 
 def get_db(name="main.db"):
     db = sqlite3.connect(name)
@@ -23,24 +24,20 @@ def create_table(db):
 
     db.commit()
 
-def add_habit(db, name, description, periodicity):
+def get_habit_data(db, habit):
     cur = db.cursor()
-    cur.execute("INSERT INTO habits VALUES (?, ?, ?)", (name, description, periodicity))
-    db.commit()
+    cur.execute("SELECT date FROM tracker WHERE habit_name=?", (habit.name,))
+    ## transforming the result into a list of dates instead of a list of tuples with strings
+    habit.check_dates = list(map(lambda x: datetime.fromisoformat(x[0]).date(), cur.fetchall()))
+    return habit
 
-def increment_tracker(db, name, event_date=None):
+def get_habits(db):
+    """
+    Function to obtain a list of Habit objects which is stored in the DB
+    :param db: database to search
+    :return: a list of Habit objects
+    """
     cur = db.cursor()
-    if not event_date:
-        event_date = str(date.today())
-    cur.execute("INSERT INTO tracker VALUES (?, ?)", (event_date, name))
-    db.commit()
-
-def get_habit_data(db, name):
-    cur = db.cursor()
-    cur.execute("SELECT date FROM tracker WHERE habit_name=?", (name,))
-    return cur.fetchall()
-
-def get_habit(db, name):
-    cur = db.cursor()
-    cur.execute("SELECT name, description, periodicity FROM habits WHERE name=?", (name,))
-    return cur.fetchall()
+    cur.execute("SELECT name, description, periodicity FROM habits")
+    habits = [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
+    return habits
