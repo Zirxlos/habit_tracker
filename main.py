@@ -2,6 +2,7 @@ import questionary
 from habit import Habit
 from db import get_habits, get_db
 from analyse import calculate_streak, compute_weakest_habit, compute_strongest_habit
+import sqlite3
 
 
 db = get_db('test.db')
@@ -40,7 +41,11 @@ def create_habit():
         period = 7
 
     habit = Habit(name=name, description=description, periodicity=period)
-    habit.store(db)
+    try:
+        habit.store(db)
+    except sqlite3.IntegrityError:
+        print(f"{habit.name} already in database, please retry")
+        main_menu()
     print(
         f'Your habit is {habit.name.lower()}, which consists of {habit.description.lower()} '
         f'that you will do every {habit.periodicity} day')

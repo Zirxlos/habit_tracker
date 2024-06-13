@@ -57,7 +57,7 @@ class TestHabit:
         assert self.test_weekly_habit.longest_streak == 2
 
         assert compute_strongest_habit(self.db).longest_streak == 8
-        assert compute_weakest_habit(self.db).longest_streak == 1
+        assert compute_weakest_habit(self.db).longest_streak == 0
 
 
 

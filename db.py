@@ -25,6 +25,12 @@ def create_table(db):
     db.commit()
 
 def get_habit_data(db, habit):
+    """
+    function to return all the checked in dates of one specific habit.
+    :param db: database to search
+    :param habit: habit to get the dates
+    :return: a list of all the checked in dates of one habit
+    """
     cur = db.cursor()
     cur.execute("SELECT date FROM tracker WHERE habit_name=?", (habit.name,))
     ## transforming the result into a list of dates instead of a list of tuples with strings
