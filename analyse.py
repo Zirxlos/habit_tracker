@@ -20,6 +20,10 @@ def calculate_streak(db, habit):
             longest_streak = max(longest_streak, current_streak)
         else:
             current_streak = 1
+    ## putting back the streaks to 0 because for computing if no checked in date, they are set to 1
+    if habit.check_dates == []:
+        longest_streak = 0
+        current_streak = 0
     habit.longest_streak = longest_streak
     habit.current_streak = current_streak
 
@@ -45,9 +49,5 @@ def compute_weakest_habit(db):
     habits = get_habits(db)
     for habit in habits:
         calculate_streak(db, habit)
-        ## putting back the streaks to 0 because for computing sake, they are set to 1 in "calculate_streak"
-        if habit.check_dates == []:
-            habit.longest_streak = 0
-            habit.current_streak = 0
     return min(habits, key=attrgetter('longest_streak'))
 

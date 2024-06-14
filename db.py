@@ -19,6 +19,7 @@ def create_table(db):
     cur.execute("""CREATE TABLE IF NOT EXISTS tracker (
             date TEXT,
             habit_name TEXT,
+            PRIMARY KEY (date, habit_name),
             FOREIGN KEY (habit_name) REFERENCES habits(name)
         )""")
 
