@@ -1,13 +1,14 @@
 import questionary
-from habit import Habit
-from db import get_habits, get_db, get_habit_data
-from analyse import calculate_streak, compute_weakest_habit, compute_strongest_habit
+from habit import Habit, get_habits
+from db import get_db
+from analyse import compute_weakest_habit, compute_strongest_habit
 import sqlite3
 from rich import print
 
 
-##db = get_db('test.db')
+# db = get_db('test.db')
 db = get_db()
+
 
 def main_menu():
 
@@ -54,7 +55,7 @@ def create_habit():
 
 
 def feedback():
-    ##habits = get_habits(db)
+    # habits = get_habits(db)
     choice = questionary.select(
         "What do you want to do?",
         choices=[
@@ -75,12 +76,14 @@ def feedback():
     else:
         main_menu()
 
+
 def see_habits():
     habits = get_habits(db)
     list_of_choices = [habit.name.capitalize() for habit in habits] + ["Main Menu"]
     choice = questionary.select(
         "Please chose a habit:",
-        choices=list_of_choices
+        choices=list_of_choices,
+        use_shortcuts=True
     ).ask()
 
     if choice == "Main Menu":
@@ -88,28 +91,29 @@ def see_habits():
 
     for habit in habits:
         if choice == habit.name.capitalize():
-            get_habit_data(db, habit)
+            habit.get_habit_data(db)
             habit_menu(habit)
             return
 
     main_menu()
 
+
 def habit_menu(habit):
     choice = questionary.select(
         "What do you want to do?",
         choices=[
-            "Complete the Habit",
-            "Delete the Habit",
-            "See Current Streak of the Habit",
-            "See Longest Streak of the Habit",
-            "Back to Habits List"
+            f'Complete "{habit.name}"',
+            f'Delete "{habit.name}"',
+            f'See Current Streak of "{habit.name}"',
+            f'See Longest Streak of "{habit.name}"',
+            "Back to Habit List"
         ]
     ).ask()
 
     if choice == "Complete the Habit":
         try:
             habit.add_event(db)
-            get_habit_data(db, habit)
+            habit.get_habit_data(db)
             print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name}" [/green]'
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
@@ -121,12 +125,12 @@ def habit_menu(habit):
         print('successfully deleted')
         see_habits()
     elif choice == "See Current Streak of the Habit":
-        calculate_streak(db, habit)
-        print(f"The current streak of {habit.name} is of {habit.current_streak}")
+        habit.calculate_streak(db)
+        print(f"The current streak of {habit.name} is {habit.current_streak}")
         habit_menu(habit)
     elif choice == "See Longest Streak of the Habit":
-        calculate_streak(db, habit)
-        print(f"The current streak of {habit.name} is of {habit.longest_streak}")
+        habit.calculate_streak(db)
+        print(f"The current streak of {habit.name} is {habit.longest_streak}")
         habit_menu(habit)
     else:
         see_habits()

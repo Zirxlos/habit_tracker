@@ -1,7 +1,7 @@
 from habit import Habit
-from db import get_db, get_habit_data
+from db import get_db
 import os
-from analyse import calculate_streak, compute_strongest_habit, compute_weakest_habit
+from analyse import compute_strongest_habit, compute_weakest_habit
 
 
 class TestHabit:
@@ -44,22 +44,22 @@ class TestHabit:
         habit2.store(self.db)
 
     def test_db_habit(self):
-        daily_data = get_habit_data(self.db, self.test_daily_habit)
-        assert len(daily_data.check_dates) == 4
+        self.test_daily_habit.get_habit_data(self.db)
+        assert len(self.test_daily_habit.check_dates) == 4
 
-        calculate_streak(self.db, self.test_daily_habit)
+        self.test_daily_habit.calculate_streak(self.db)
         assert self.test_daily_habit.longest_streak == 4
+        assert self.test_daily_habit.current_streak == 0
 
-        weekly_data = get_habit_data(self.db, self.test_weekly_habit)
-        assert len(weekly_data.check_dates) == 3
+        self.test_weekly_habit.get_habit_data(self.db)
+        assert len(self.test_weekly_habit.check_dates) == 3
 
-        calculate_streak(self.db, self.test_weekly_habit)
+        self.test_weekly_habit.calculate_streak(self.db)
         assert self.test_weekly_habit.longest_streak == 2
+        assert self.test_weekly_habit.current_streak == 0
 
         assert compute_strongest_habit(self.db).longest_streak == 8
         assert compute_weakest_habit(self.db).longest_streak == 0
-
-
 
     def teardown_method(self):
         self.db.close()
