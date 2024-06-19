@@ -1,6 +1,5 @@
 from datetime import timedelta, date
 from operator import attrgetter
-import habit as hb
 
 
 def calculate_streak_daily(habit):
@@ -37,25 +36,31 @@ def calculate_streak_weekly(habit):
     :return:
     """
     sorted_dates = sorted(habit.check_dates)
-    longest_streak = 1
-    current_streak = 1
+    longest_streak = 0
+    current_streak = 0
     week_checked = False
-    week_begin = sorted_dates[0]
+    week_begin = sorted_dates[0] - timedelta(days=sorted_dates[0].weekday())  # Monday of the first week
 
-    for i in range(1, len(sorted_dates)):
-        if week_checked and week_begin - sorted_dates[i] >= timedelta(days=habit.periodicity):
+    for check_in_date in sorted_dates:
+        week_end = week_begin + timedelta(days=6)  # Sunday of the current week
+
+        if check_in_date > week_end and week_checked:
+            week_begin += timedelta(days=7)
+            week_end = week_begin + timedelta(days=6)
             week_checked = False
-        if sorted_dates[i] - sorted_dates[i - 1] <= timedelta(days=habit.periodicity) and not week_checked:
+
+        if check_in_date > week_end and not week_checked:
+            week_begin += timedelta(days=7)
+            week_end = week_begin + timedelta(days=6)
+            current_streak = 1
+            week_checked = True
+
+        if week_begin <= check_in_date <= week_end and not week_checked:
+            week_checked = True
             current_streak += 1
             longest_streak = max(longest_streak, current_streak)
-            week_checked = True
-            week_begin = sorted_dates[i - 1]
-        elif week_checked:
-            pass
-        else:
-            current_streak = 1
 
-    if habit.check_dates and date.today() - sorted_dates[0] >= timedelta(days=habit.periodicity):
+    if habit.check_dates and date.today() - sorted_dates[-1] >= 2 * timedelta(days=habit.periodicity):
         current_streak = 0
 
     habit.longest_streak = longest_streak
@@ -64,25 +69,26 @@ def calculate_streak_weekly(habit):
     return habit
 
 
-def compute_strongest_habit(db):
+def compute_strongest_habit(db, habits):
     """
     function to extract the habit with the highest streak ever
+    :param habits:
     :param db: database to search
     :return: the habit with the max "longest_streak"
     """
-    habits = hb.get_habits(db)
+    #habits = hb.get_habits(db)
     for habit in habits:
         habit.calculate_streak(db)
     return max(habits, key=attrgetter('longest_streak'))
 
 
-def compute_weakest_habit(db):
+def compute_weakest_habit(db, habits):
     """
     function to extract the habit with the lowest streak ever
     :param db: database to search
     :return: the habit with the min "longest_streak"
     """
-    habits = hb.get_habits(db)
+    #habits = hb.get_habits(db)
     for habit in habits:
         habit.calculate_streak(db)
     return min(habits, key=attrgetter('longest_streak'))
