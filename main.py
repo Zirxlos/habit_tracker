@@ -44,7 +44,7 @@ def create_habit():
     habit = Habit(name=name, description=description, periodicity=period)
 
     try:
-        habit.store()
+        habit.store(db)
         print(f'[blue]You added "{habit.name}" to your habits[/blue]')
     except sqlite3.IntegrityError:
         print(f'[red]Habit "{habit.name}" already in database, please retry[red]')
