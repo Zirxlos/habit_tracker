@@ -5,8 +5,8 @@ import habit as hb
 
 def calculate_streak_daily(habit):
     """
-    Calculate the longest streak of a habit
-    :param habit: Habit class object
+    Calculate the longest and current streak of a daily Habit
+    :param habit: Habit class object from which we want to get the longest and current streak
     :return: the longest streak of uninterrupted check-in of the habit
     """
     sorted_dates = sorted(habit.check_dates)
@@ -18,7 +18,7 @@ def calculate_streak_daily(habit):
             longest_streak = max(longest_streak, current_streak)
         else:
             current_streak = 1
-    # putting back the streaks to 0 because for computing if no checked in date, they are set to 1
+
     if habit.check_dates and sorted_dates[0] != date.today():
         current_streak = 0
 
@@ -29,13 +29,21 @@ def calculate_streak_daily(habit):
 
 
 def calculate_streak_weekly(habit):
+    """
+    computes the longest and current streak of a weekly Habit
+    a habit needs to be completed at least every 7 days. If a habit is completed 8 times
+    8 days in a row, it will compute a streak of 2
+    :param habit: Habit class object from which we want to get the longest and current streak
+    :return:
+    """
     sorted_dates = sorted(habit.check_dates)
     longest_streak = 1
     current_streak = 1
     week_checked = False
     week_begin = sorted_dates[0]
+
     for i in range(1, len(sorted_dates)):
-        if week_begin - sorted_dates[i - 1] >= timedelta(days=habit.periodicity):
+        if week_checked and week_begin - sorted_dates[i] >= timedelta(days=habit.periodicity):
             week_checked = False
         if sorted_dates[i] - sorted_dates[i - 1] <= timedelta(days=habit.periodicity) and not week_checked:
             current_streak += 1

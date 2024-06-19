@@ -59,5 +59,6 @@ def get_habits(db):
     """
     cur = db.cursor()
     cur.execute("SELECT name, description, periodicity FROM habits")
-    habits = [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
-    return habits
+    # habits = [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
+    # return habits
+    return [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
