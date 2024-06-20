@@ -115,6 +115,7 @@ def habit_menu(habit):
             f'Delete "{habit.name}"',
             f'See Current Streak of "{habit.name}"',
             f'See Longest Streak of "{habit.name}"',
+            f'See description of "{habit.name}"',
             "Back to Habit List"
         ]
     ).ask()
@@ -123,10 +124,10 @@ def habit_menu(habit):
         try:
             habit.add_event(db)
             habit.get_habit_data(db)
-            print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name}" [/green]'
+            print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name.capitalize()}" [/green]'
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
-            print("[red]You have already checked in for today[/red]")
+            print('[red]You have already checked "{habit.name.capitalize()}" for today[/red]')
         habit_menu(habit)
     elif choice == f'Delete "{habit.name}"':
         print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")
@@ -141,6 +142,8 @@ def habit_menu(habit):
         habit.calculate_streak(db)
         print(f'[green]The longest streak of "{habit.name.capitalize()}" is {habit.longest_streak}[/green]')
         habit_menu(habit)
+    elif choice == f'See description of "{habit.name}"':
+        print(f'"{habit.name.capitalize()}" consists of "{habit.description}"')
     else:
         see_habits()
     pass
