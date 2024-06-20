@@ -44,22 +44,27 @@ def calculate_streak_weekly(habit):
     for check_in_date in sorted_dates:
         week_end = week_begin + timedelta(days=6)  # Sunday of the current week
 
-        if check_in_date > week_end and week_checked:
+        if check_in_date > week_end and week_checked:  # goes to the next week when current week checked
             week_begin += timedelta(days=7)
             week_end = week_begin + timedelta(days=6)
             week_checked = False
 
-        if check_in_date > week_end and not week_checked:
+        if check_in_date > week_end and not week_checked:  # goes to the next week when current week not checked
             week_begin += timedelta(days=7)
             week_end = week_begin + timedelta(days=6)
             current_streak = 1
             week_checked = True
 
-        if week_begin <= check_in_date <= week_end and not week_checked:
+        if week_begin <= check_in_date <= week_end and not week_checked:  # check if date is in current week when
+            # week not checked
             week_checked = True
             current_streak += 1
             longest_streak = max(longest_streak, current_streak)
 
+        # no need to check if date is in current week and week checked because nothing would happen anyway
+
+    # this is to be sure the current streak is 0 if a habit is checked for current streak and the day the user checks
+    # is already too late to get a +1  to the streak
     if habit.check_dates and date.today() - sorted_dates[-1] >= 2 * timedelta(days=habit.periodicity):
         current_streak = 0
 
