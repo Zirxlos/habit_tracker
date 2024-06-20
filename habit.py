@@ -11,6 +11,10 @@ class Habit:
         self.current_streak = 0
         self.check_dates = []
 
+    # this is only to be able to delete a habit from the list of habits
+    def __eq__(self, other):
+        return self.name == other.name
+
     def store(self, db):
         cur = db.cursor()
         cur.execute("INSERT INTO habits VALUES (?, ?, ?)", (self.name, self.description, self.periodicity))
@@ -21,6 +25,7 @@ class Habit:
             event_date = str(date.today())
         cur = db.cursor()
         cur.execute("INSERT INTO tracker VALUES (?, ?)", (event_date, self.name))
+        self.check_dates.insert(0, datetime.fromisoformat(event_date).date())
         db.commit()
 
     def delete_habit(self, db):
@@ -48,7 +53,6 @@ class Habit:
         :param db: database to search
         :return: void, the Habit is returned by the called functions and updates the Habit instance
         """
-        self.get_habit_data(db)
         if not self.check_dates:
             self.longest_streak = 0
             self.current_streak = 0
@@ -71,7 +75,4 @@ def get_habits(db, periodicity=None):
         cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
     else:
         cur.execute("SELECT name, description, periodicity FROM habits")
-    # habits = [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
-    # return habits
-    # return [Habit(*item) for item in list(map(lambda x: x, cur.fetchall()))]
     return [Habit(*item) for item in [row for row in cur.fetchall()]]

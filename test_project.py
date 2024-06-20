@@ -50,6 +50,7 @@ class TestHabit:
         self.test_weekly_habit_computing.add_event(self.db, "2024-06-02")
         self.test_weekly_habit_computing.add_event(self.db, "2024-06-19")
 
+
     def test_habit(self):
         habit1 = Habit("test_habit_1", "test_description_1", 1)
         habit2 = Habit("test_habit_2", "test_description_2", 7)
@@ -65,6 +66,10 @@ class TestHabit:
         assert len(self.test_weekly_habit.check_dates) == 3
 
     def test_calculate_streak(self):
+        habits = get_habits(self.db)
+        for habit in habits:
+            habit.get_habit_data(self.db)
+
         self.test_daily_habit.calculate_streak(self.db)
         assert self.test_daily_habit.longest_streak == 4
         assert self.test_daily_habit.current_streak == 0
@@ -73,8 +78,8 @@ class TestHabit:
         assert self.test_weekly_habit.longest_streak == 3
         assert self.test_weekly_habit.current_streak == 3
 
-        assert strongest_weakest_habit(self.db, get_habits(self.db))[0].longest_streak == 8
-        assert strongest_weakest_habit(self.db, get_habits(self.db))[1].longest_streak == 0
+        assert strongest_weakest_habit(self.db, habits)[0].longest_streak == 8
+        assert strongest_weakest_habit(self.db, habits)[1].longest_streak == 0
 
         self.test_weekly_habit_computing.calculate_streak(self.db)
         assert self.test_weekly_habit_computing.longest_streak == 5

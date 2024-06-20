@@ -6,7 +6,11 @@ import sqlite3
 from rich import print
 
 # db = get_db('test.db')
+# loading the whole database
 db = get_db()
+habits = get_habits(db)  # creating a global list
+for habit in habits:
+    habit.get_habit_data(db)
 
 
 def main_menu():
@@ -44,7 +48,8 @@ def create_habit():
     habit = Habit(name=name, description=description, periodicity=period)
 
     try:
-        habit.store(db)
+        habit.store(db)  # updating database
+        habits.append(habit)  # updating global list
         print(f'[blue]You added "{habit.name}" to your habits[/blue]')
     except sqlite3.IntegrityError:
         print(f'[red]Habit "{habit.name}" already in database, please retry[red]')
@@ -53,7 +58,6 @@ def create_habit():
 
 
 def feedback():
-    # habits = get_habits(db)
     choice = questionary.select(
         "What do you want to do?",
         choices=[
@@ -64,13 +68,11 @@ def feedback():
     ).ask()
 
     if choice == "See my Weakest Habit":
-        #habit = compute_weakest_habit(db)
-        habit = strongest_weakest_habit(db, get_habits(db))[1]
+        habit = strongest_weakest_habit(db, habits)[1]
         print(f"Your weakest habit is {habit.name} with a longest streak of {habit.longest_streak}")
         main_menu()
     elif choice == "See my Strongest Habit":
-        #habit = compute_strongest_habit(db)
-        habit = strongest_weakest_habit(db, get_habits(db))[0]
+        habit = strongest_weakest_habit(db, habits)[0]
         print(f"Your strongest habit is {habit.name} with a longest streak of {habit.longest_streak}")
         main_menu()
     else:
@@ -80,9 +82,13 @@ def feedback():
 def see_habits(type=None):
     if type is None:
         list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
-                                                                         get_habits(db)] + ["Main Menu"]
+                                                                         habits] + ["Main Menu"]
+    elif type == "daily":
+        list_of_choices = [habit.name.capitalize() for habit in habits if habit.periodicity == 1] + ["Back"] + ["Main "
+                                                                                                                "Menu"]
     else:
-        list_of_choices = [habit.name.capitalize() for habit in get_habits(db, type)] + ["Back"] + ["Main Menu"]
+        list_of_choices = [habit.name.capitalize() for habit in habits if habit.periodicity == 7] + ["Back"] + [
+            "Main Menu"]
     choice = questionary.select(
         "Please chose a habit:",
         choices=list_of_choices,
@@ -123,7 +129,6 @@ def habit_menu(habit):
     if choice == f'Complete "{habit.name}"':
         try:
             habit.add_event(db)
-            habit.get_habit_data(db)
             print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name.capitalize()}" [/green]'
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
@@ -131,7 +136,8 @@ def habit_menu(habit):
         habit_menu(habit)
     elif choice == f'Delete "{habit.name}"':
         print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")
-        habit.delete_habit(db)
+        habit.delete_habit(db)  # updating database
+        habits.remove(habit)  # updating global list
         print('[green]successfully deleted[/green]')
         see_habits()
     elif choice == f'See Current Streak of "{habit.name}"':
@@ -144,6 +150,7 @@ def habit_menu(habit):
         habit_menu(habit)
     elif choice == f'See description of "{habit.name}"':
         print(f'"{habit.name.capitalize()}" consists of "{habit.description}"')
+        habit_menu(habit)
     else:
         see_habits()
     pass
