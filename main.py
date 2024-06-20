@@ -1,7 +1,7 @@
 import questionary
 from habit import Habit, get_habits
 from db import get_db
-from analyse import compute_weakest_habit, compute_strongest_habit
+from analyse import strongest_weakest_habit
 import sqlite3
 from rich import print
 
@@ -65,12 +65,12 @@ def feedback():
 
     if choice == "See my Weakest Habit":
         #habit = compute_weakest_habit(db)
-        habit = compute_weakest_habit(db, get_habits(db))
+        habit = strongest_weakest_habit(db, get_habits(db))[1]
         print(f"Your weakest habit is {habit.name} with a longest streak of {habit.longest_streak}")
         main_menu()
     elif choice == "See my Strongest Habit":
         #habit = compute_strongest_habit(db)
-        habit = compute_strongest_habit(db, get_habits(db))
+        habit = strongest_weakest_habit(db, get_habits(db))[0]
         print(f"Your strongest habit is {habit.name} with a longest streak of {habit.longest_streak}")
         main_menu()
     else:
@@ -119,7 +119,7 @@ def habit_menu(habit):
         ]
     ).ask()
 
-    if choice == "Complete the Habit":
+    if choice == f'Complete "{habit.name}"':
         try:
             habit.add_event(db)
             habit.get_habit_data(db)
@@ -127,11 +127,12 @@ def habit_menu(habit):
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
             print("[red]You have already checked in for today[/red]")
+        print("error")
         habit_menu(habit)
-    elif choice == "Delete the Habit":
-        print(f'{habit.name}', end=" ")
+    elif choice == f'Delete "{habit.name}"':
+        print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")
         habit.delete_habit(db)
-        print('successfully deleted')
+        print('[green]successfully deleted[/green]')
         see_habits()
     elif choice == f'See Current Streak of "{habit.name}"':
         habit.calculate_streak(db)

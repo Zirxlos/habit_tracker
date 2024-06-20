@@ -1,7 +1,7 @@
 from habit import Habit, get_habits
 from db import get_db
 import os
-from analyse import compute_strongest_habit, compute_weakest_habit
+from analyse import strongest_weakest_habit
 
 
 class TestHabit:
@@ -73,8 +73,8 @@ class TestHabit:
         assert self.test_weekly_habit.longest_streak == 3
         assert self.test_weekly_habit.current_streak == 3
 
-        assert compute_strongest_habit(self.db, get_habits(self.db)).longest_streak == 8
-        assert compute_weakest_habit(self.db, get_habits(self.db)).longest_streak == 0
+        assert strongest_weakest_habit(self.db, get_habits(self.db))[0].longest_streak == 8
+        assert strongest_weakest_habit(self.db, get_habits(self.db))[1].longest_streak == 0
 
         self.test_weekly_habit_computing.calculate_streak(self.db)
         assert self.test_weekly_habit_computing.longest_streak == 5

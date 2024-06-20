@@ -69,26 +69,15 @@ def calculate_streak_weekly(habit):
     return habit
 
 
-def compute_strongest_habit(db, habits):
+def strongest_weakest_habit(db, habits):
     """
     function to extract the habit with the highest streak ever
     :param habits:
     :param db: database to search
-    :return: the habit with the max "longest_streak"
+    :return: a list with the habit with the max "longest_streak" at index 0 and the habit with the min "longest_streak"
+    at index 1
     """
     #habits = hb.get_habits(db)
     for habit in habits:
         habit.calculate_streak(db)
-    return max(habits, key=attrgetter('longest_streak'))
-
-
-def compute_weakest_habit(db, habits):
-    """
-    function to extract the habit with the lowest streak ever
-    :param db: database to search
-    :return: the habit with the min "longest_streak"
-    """
-    #habits = hb.get_habits(db)
-    for habit in habits:
-        habit.calculate_streak(db)
-    return min(habits, key=attrgetter('longest_streak'))
+    return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
