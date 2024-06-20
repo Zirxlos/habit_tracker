@@ -1,4 +1,4 @@
-from habit import Habit, get_weekly_habits, get_daily_habits, get_habits
+from habit import Habit, get_habits
 from db import get_db
 import os
 from analyse import compute_strongest_habit, compute_weakest_habit
@@ -82,8 +82,8 @@ class TestHabit:
 
     def test_get_habits(self):
         assert len(get_habits(self.db)) == 5
-        assert len(get_weekly_habits(self.db)) == 3
-        assert len(get_daily_habits(self.db)) == 2
+        assert len(get_habits(self.db, "weekly")) == 3
+        assert len(get_habits(self.db, "daily")) == 2
 
     def teardown_method(self):
         self.db.close()

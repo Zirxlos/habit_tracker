@@ -1,5 +1,5 @@
 import questionary
-from habit import Habit, get_habits, get_weekly_habits, get_daily_habits
+from habit import Habit, get_habits
 from db import get_db
 from analyse import compute_weakest_habit, compute_strongest_habit
 import sqlite3
@@ -77,9 +77,12 @@ def feedback():
         main_menu()
 
 
-def see_habits():
-    list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
+def see_habits(type=None):
+    if type is None:
+        list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
                                                                      get_habits(db)] + ["Main Menu"]
+    else:
+        list_of_choices = [habit.name.capitalize() for habit in get_habits(db, type)] + ["Back"] + ["Main Menu"]
     choice = questionary.select(
         "Please chose a habit:",
         choices=list_of_choices,
@@ -89,9 +92,11 @@ def see_habits():
     if choice == "Main Menu":
         main_menu()
     if choice == "Show daily habits":
-        daily_habits()
+        see_habits("daily")
     if choice == "Show weekly habits":
-        weekly_habits()
+        see_habits("weekly")
+    if choice == "Back":
+        see_habits()
 
     for habit in get_habits(db):
         if choice == habit.name.capitalize():
@@ -100,38 +105,6 @@ def see_habits():
             return
 
     main_menu()
-
-
-def daily_habits():
-    list_of_choices = [habit.name.capitalize() for habit in get_daily_habits(db)] + ["Main Menu"]
-    choice = questionary.select(
-        "Please chose a habit:",
-        choices=list_of_choices,
-        use_shortcuts=True
-    ).ask()
-    if choice == "Main Menu":
-        main_menu()
-    for habit in get_daily_habits(db):
-        if choice == habit.name.capitalize():
-            habit.get_habit_data(db)
-            habit_menu(habit)
-            return
-
-
-def weekly_habits():
-    list_of_choices = [habit.name.capitalize() for habit in get_weekly_habits(db)] + ["Main Menu"]
-    choice = questionary.select(
-        "Please chose a habit:",
-        choices=list_of_choices,
-        use_shortcuts=True
-    ).ask()
-    if choice == "Main Menu":
-        main_menu()
-    for habit in get_weekly_habits(db):
-        if choice == habit.name.capitalize():
-            habit.get_habit_data(db)
-            habit_menu(habit)
-            return
 
 
 def habit_menu(habit):
