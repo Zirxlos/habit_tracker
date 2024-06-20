@@ -1,4 +1,5 @@
 import sqlite3
+import habit as h
 
 
 def get_db(name="main.db"):
@@ -25,3 +26,19 @@ def create_table(db):
 
     db.commit()
 
+
+def get_habits(db, periodicity=None):
+    """
+    Function to obtain a list of Habit objects which is stored in the DB
+    :param periodicity: "daily" or "weekly"
+    :param db: database to search
+    :return: a list of Habit objects
+    """
+    cur = db.cursor()
+    if periodicity == "daily":
+        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 1")
+    elif periodicity == "weekly":
+        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
+    else:
+        cur.execute("SELECT name, description, periodicity FROM habits")
+    return [h.Habit(*item) for item in [row for row in cur.fetchall()]]

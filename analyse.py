@@ -4,8 +4,8 @@ from operator import attrgetter
 
 def calculate_streak_daily(habit):
     """
-    Calculate the longest and current streak of a daily Habit
-    :param habit: Habit class object from which we want to get the longest and current streak
+    Calculate the longest and current streak of a daily habit
+    :param habit: daily habit to input
     :return: the longest streak of uninterrupted check-in of the habit
     """
     sorted_dates = sorted(habit.check_dates)
@@ -74,15 +74,14 @@ def calculate_streak_weekly(habit):
     return habit
 
 
-def strongest_weakest_habit(db, habits):
+def strongest_weakest_habit(habits):
     """
     function to extract the habit with the highest streak ever
     :param habits:
-    :param db: database to search
     :return: a list with the habit with the max "longest_streak" at index 0 and the habit with the min "longest_streak"
     at index 1
     """
-    #habits = hb.get_habits(db)
+    # habits = hb.get_habits(db)
     for habit in habits:
-        habit.calculate_streak(db)
+        habit.calculate_streak()
     return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]

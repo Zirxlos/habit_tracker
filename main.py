@@ -1,6 +1,6 @@
 import questionary
-from habit import Habit, get_habits
-from db import get_db
+from habit import Habit
+from db import get_db, get_habits
 from analyse import strongest_weakest_habit
 import sqlite3
 from rich import print
@@ -9,8 +9,8 @@ from rich import print
 # loading the whole database
 db = get_db()
 habits = get_habits(db)  # creating a global list
-for habit in habits:
-    habit.get_habit_data(db)
+for item in habits:
+    item.get_habit_data(db)
 
 
 def main_menu():
@@ -45,14 +45,14 @@ def create_habit():
     else:
         period = 7
 
-    habit = Habit(name=name, description=description, periodicity=period)
+    new_habit = Habit(name=name, description=description, periodicity=period)
 
     try:
-        habit.store(db)  # updating database
-        habits.append(habit)  # updating global list
-        print(f'[blue]You added "{habit.name}" to your habits[/blue]')
+        new_habit.store(db)  # updating database
+        habits.append(new_habit)  # updating global list
+        print(f'[blue]You added "{new_habit.name}" to your habits[/blue]')
     except sqlite3.IntegrityError:
-        print(f'[red]Habit "{habit.name}" already in database, please retry[red]')
+        print(f'[red]Habit "{new_habit.name}" already in database, please retry[red]')
 
     main_menu()
 
@@ -68,22 +68,23 @@ def feedback():
     ).ask()
 
     if choice == "See my Weakest Habit":
-        habit = strongest_weakest_habit(db, habits)[1]
-        print(f"Your weakest habit is {habit.name} with a longest streak of {habit.longest_streak}")
+        weakest_habit = strongest_weakest_habit(habits)[1]
+        print(f"Your weakest habit is {weakest_habit.name} with a longest streak of {weakest_habit.longest_streak}")
         main_menu()
     elif choice == "See my Strongest Habit":
-        habit = strongest_weakest_habit(db, habits)[0]
-        print(f"Your strongest habit is {habit.name} with a longest streak of {habit.longest_streak}")
+        strongest_habit = strongest_weakest_habit(habits)[0]
+        print(
+            f'Your strongest habit is {strongest_habit.name} with a longest streak of {strongest_habit.longest_streak}')
         main_menu()
     else:
         main_menu()
 
 
-def see_habits(type=None):
-    if type is None:
+def see_habits(frequency=None):
+    if frequency is None:
         list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
                                                                          habits] + ["Main Menu"]
-    elif type == "daily":
+    elif frequency == "daily":
         list_of_choices = [habit.name.capitalize() for habit in habits if habit.periodicity == 1] + ["Back"] + ["Main "
                                                                                                                 "Menu"]
     else:
@@ -141,11 +142,11 @@ def habit_menu(habit):
         print('[green]successfully deleted[/green]')
         see_habits()
     elif choice == f'See Current Streak of "{habit.name}"':
-        habit.calculate_streak(db)
+        habit.calculate_streak()
         print(f'[green]The current streak of "{habit.name.capitalize()}" is {habit.current_streak}[/green]')
         habit_menu(habit)
     elif choice == f'See Longest Streak of "{habit.name}"':
-        habit.calculate_streak(db)
+        habit.calculate_streak()
         print(f'[green]The longest streak of "{habit.name.capitalize()}" is {habit.longest_streak}[/green]')
         habit_menu(habit)
     elif choice == f'See description of "{habit.name}"':

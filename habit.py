@@ -46,11 +46,10 @@ class Habit:
         # self.check_dates = list(map(lambda x: datetime.fromisoformat(x[0]).date(), cur.fetchall()))
         self.check_dates = [datetime.fromisoformat(row[0]).date() for row in cur.fetchall()]
 
-    def calculate_streak(self, db):
+    def calculate_streak(self):
         """
         function which computes streak of a Habit. A daily Habit must be made once per day and a weekly Habit must be
         done once per week between Monday and Friday.
-        :param db: database to search
         :return: void, the Habit is returned by the called functions and updates the Habit instance
         """
         if not self.check_dates:
@@ -60,19 +59,3 @@ class Habit:
             calculate_streak_daily(self)
         else:
             calculate_streak_weekly(self)
-
-
-def get_habits(db, periodicity=None):
-    """
-    Function to obtain a list of Habit objects which is stored in the DB
-    :param db: database to search
-    :return: a list of Habit objects
-    """
-    cur = db.cursor()
-    if periodicity == "daily":
-        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 1")
-    elif periodicity == "weekly":
-        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
-    else:
-        cur.execute("SELECT name, description, periodicity FROM habits")
-    return [Habit(*item) for item in [row for row in cur.fetchall()]]
