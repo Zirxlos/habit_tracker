@@ -1,5 +1,5 @@
 import sqlite3
-import habit as h
+from habit import Habit
 
 
 def get_db(name="main.db"):
@@ -41,4 +41,4 @@ def get_habits(db, periodicity=None):
         cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
     else:
         cur.execute("SELECT name, description, periodicity FROM habits")
-    return [h.Habit(*item) for item in [row for row in cur.fetchall()]]
+    return [Habit(*item) for item in [row for row in cur.fetchall()]]
