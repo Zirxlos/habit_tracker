@@ -127,7 +127,6 @@ def habit_menu(habit):
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
             print("[red]You have already checked in for today[/red]")
-        print("error")
         habit_menu(habit)
     elif choice == f'Delete "{habit.name}"':
         print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")
@@ -136,11 +135,11 @@ def habit_menu(habit):
         see_habits()
     elif choice == f'See Current Streak of "{habit.name}"':
         habit.calculate_streak(db)
-        print(f"The current streak of {habit.name} is {habit.current_streak}")
+        print(f'[green]The current streak of "{habit.name.capitalize()}" is {habit.current_streak}[/green]')
         habit_menu(habit)
     elif choice == f'See Longest Streak of "{habit.name}"':
         habit.calculate_streak(db)
-        print(f"The longest streak of {habit.name} is {habit.longest_streak}")
+        print(f'[green]The longest streak of "{habit.name.capitalize()}" is {habit.longest_streak}[/green]')
         habit_menu(habit)
     else:
         see_habits()
