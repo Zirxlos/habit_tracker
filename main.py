@@ -80,7 +80,7 @@ def feedback():
 def see_habits(type=None):
     if type is None:
         list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
-                                                                     get_habits(db)] + ["Main Menu"]
+                                                                         get_habits(db)] + ["Main Menu"]
     else:
         list_of_choices = [habit.name.capitalize() for habit in get_habits(db, type)] + ["Back"] + ["Main Menu"]
     choice = questionary.select(
