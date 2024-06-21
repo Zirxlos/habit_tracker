@@ -100,8 +100,8 @@ def strongest_weakest_habit(habits):
 
 def get_habits(db, periodicity=None):
     """
-    Function to obtain a list of Habit objects which is stored in the DB
-    :param periodicity: "daily" or "weekly"
+    Function to obtain a list of Habit objects (daily, weekly or all of them) which is stored in the DB.
+    :param periodicity: "daily" or "weekly". If no argument, or any other, default is to all habits.
     :param db: database to search
     :return: a list of Habit objects
     """

@@ -28,7 +28,7 @@ class Habit:
         """
         method to add a check in date into the database and inside the check_dates list attribute of the habit
         :param db: database to insert into
-        :param event_date: if no date inserted, will default to todays date
+        :param event_date: if no date inserted, will default to today's date
         :return: void
         """
         if not event_date:
