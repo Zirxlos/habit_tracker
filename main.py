@@ -68,12 +68,14 @@ def feedback():
 
     if choice == "See my Weakest Habit":
         weakest_habit = strongest_weakest_habit(habits)[1]
-        print(f"Your weakest habit is {weakest_habit.name} with a longest streak of {weakest_habit.longest_streak}")
+        print(f'Your [blue]weakest habit[/blue] is [blue]"{weakest_habit.name.capitalize()}"[/blue] with a longest '
+              f'streak of [blue]{weakest_habit.longest_streak}[/blue]')
         main_menu()
     elif choice == "See my Strongest Habit":
         strongest_habit = strongest_weakest_habit(habits)[0]
         print(
-            f'Your strongest habit is {strongest_habit.name} with a longest streak of {strongest_habit.longest_streak}')
+            f'Your [green]strongest habit[/green] is "{strongest_habit.name.capitalize()}" with a longest '
+            f'streak of [green]{strongest_habit.longest_streak}[/green]')
         main_menu()
     else:
         main_menu()
@@ -114,42 +116,43 @@ def see_habits(frequency=None):
 
 
 def habit_menu(habit):
+    habit_name = habit.name.capitalize()
     choice = questionary.select(
         "What do you want to do?",
         choices=[
-            f'Complete "{habit.name}"',
-            f'Delete "{habit.name}"',
-            f'See Current Streak of "{habit.name}"',
-            f'See Longest Streak of "{habit.name}"',
-            f'See description of "{habit.name}"',
+            f'Complete "{habit_name}"',
+            f'Delete "{habit_name}"',
+            f'See Current Streak of "{habit_name}"',
+            f'See Longest Streak of "{habit_name}"',
+            f'See description of "{habit_name}"',
             "Back to Habit List"
         ]
     ).ask()
 
-    if choice == f'Complete "{habit.name}"':
+    if choice == f'Complete "{habit_name}"':
         try:
             habit.add_event(db)
-            print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name.capitalize()}" [/green]'
+            print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit_name}" [/green]'
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
-            print(f'[red]You have already checked "{habit.name.capitalize()}" for today[/red]')
+            print(f'[red]You have already checked "{habit_name}" for today[/red]')
         habit_menu(habit)
-    elif choice == f'Delete "{habit.name}"':
-        print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")
+    elif choice == f'Delete "{habit_name}"':
+        print(f'[green]"{habit_name}"[/green]', end=" ")
         habit.delete_habit(db)  # updating database
         habits.remove(habit)  # updating global list
         print('[green]successfully deleted[/green]')
         see_habits()
-    elif choice == f'See Current Streak of "{habit.name}"':
+    elif choice == f'See Current Streak of "{habit_name}"':
         habit.longest_streak, habit.current_streak = calculate_streak(habit)
-        print(f'[green]The current streak of "{habit.name.capitalize()}" is {habit.current_streak}[/green]')
+        print(f'[green]The current streak of "{habit_name}" is {habit.current_streak}[/green]')
         habit_menu(habit)
-    elif choice == f'See Longest Streak of "{habit.name}"':
+    elif choice == f'See Longest Streak of "{habit_name}"':
         habit.longest_streak, habit.current_streak = calculate_streak(habit)
-        print(f'[green]The longest streak of "{habit.name.capitalize()}" is {habit.longest_streak}[/green]')
+        print(f'[green]The longest streak of "{habit_name}" is {habit.longest_streak}[/green]')
         habit_menu(habit)
-    elif choice == f'See description of "{habit.name}"':
-        print(f'"{habit.name.capitalize()}" consists of "{habit.description}"')
+    elif choice == f'See description of "{habit_name}"':
+        print(f'"{habit_name}" consists of "{habit.description}"')
         habit_menu(habit)
     else:
         see_habits()
