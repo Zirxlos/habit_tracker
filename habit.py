@@ -16,7 +16,7 @@ class Habit:
 
     def store(self, db):
         """
-        method to store the habit into the habits table of the database
+        method to store the habit into the habits table of the DB
         :param db: database to insert into
         :return: void
         """
@@ -35,12 +35,12 @@ class Habit:
             event_date = str(date.today())
         cur = db.cursor()
         cur.execute("INSERT INTO tracker VALUES (?, ?)", (event_date, self.name))
-        self.check_dates.insert(0, datetime.fromisoformat(event_date).date())
+        self.check_dates.append(datetime.fromisoformat(event_date).date())
         db.commit()
 
     def delete_habit(self, db):
         """
-        method to delete the habit from the database
+        method to delete the habit from the DB
         :param db: database to delete from
         :return: void
         """
