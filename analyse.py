@@ -1,5 +1,22 @@
 from datetime import timedelta, date
 from operator import attrgetter
+from habit import Habit
+
+
+def calculate_streak(habit):
+    """
+    function which computes streak of a Habit. A daily Habit must be made once per day and a weekly Habit must be
+    done once per week between Monday and Friday.
+    :return: void, the Habit is returned by the called functions and updates the Habit instance
+    """
+    if not habit.check_dates:
+        longest_streak = 0
+        current_streak = 0
+        return [longest_streak, current_streak]
+    elif habit.periodicity == 1:
+        return calculate_streak_daily(habit)
+    else:
+        return calculate_streak_weekly(habit)
 
 
 def calculate_streak_daily(habit):
@@ -21,8 +38,7 @@ def calculate_streak_daily(habit):
     if habit.check_dates and sorted_dates[-1] != date.today():
         current_streak = 0
 
-    habit.longest_streak = longest_streak
-    habit.current_streak = current_streak
+    return [longest_streak, current_streak]
 
 
 def calculate_streak_weekly(habit):
@@ -66,8 +82,7 @@ def calculate_streak_weekly(habit):
     if habit.check_dates and date.today() - sorted_dates[-1] >= 2 * timedelta(days=habit.periodicity):
         current_streak = 0
 
-    habit.longest_streak = longest_streak
-    habit.current_streak = current_streak
+    return [longest_streak, current_streak]
 
 
 def strongest_weakest_habit(habits):
@@ -79,5 +94,22 @@ def strongest_weakest_habit(habits):
     """
     # habits = hb.get_habits(db)
     for habit in habits:
-        habit.calculate_streak()
+        habit.longest_streak, habit.current_streak = calculate_streak(habit)
     return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
+
+
+def get_habits(db, periodicity=None):
+    """
+    Function to obtain a list of Habit objects which is stored in the DB
+    :param periodicity: "daily" or "weekly"
+    :param db: database to search
+    :return: a list of Habit objects
+    """
+    cur = db.cursor()
+    if periodicity == "daily":
+        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 1")
+    elif periodicity == "weekly":
+        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
+    else:
+        cur.execute("SELECT name, description, periodicity FROM habits")
+    return [Habit(*item) for item in [row for row in cur.fetchall()]]

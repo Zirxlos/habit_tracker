@@ -1,5 +1,4 @@
 from datetime import date, datetime
-from analyse import calculate_streak_daily, calculate_streak_weekly
 
 
 class Habit:
@@ -60,17 +59,3 @@ class Habit:
         cur.execute("SELECT date FROM tracker WHERE habit_name=?", (self.name,))
         # transforming the result into a list of dates instead of a list of tuples with strings
         self.check_dates = [datetime.fromisoformat(row[0]).date() for row in cur.fetchall()]
-
-    def calculate_streak(self):
-        """
-        function which computes streak of a Habit. A daily Habit must be made once per day and a weekly Habit must be
-        done once per week between Monday and Friday.
-        :return: void, the Habit is returned by the called functions and updates the Habit instance
-        """
-        if not self.check_dates:
-            self.longest_streak = 0
-            self.current_streak = 0
-        elif self.periodicity == 1:
-            calculate_streak_daily(self)
-        else:
-            calculate_streak_weekly(self)
