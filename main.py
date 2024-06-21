@@ -10,7 +10,7 @@ from rich import print
 db = get_db()
 habits = get_habits(db)  # creating a global list
 for item in habits:
-    item.get_habit_data(db)
+    item.get_habit_data(db)  # loading all the checked in dates
 
 
 def main_menu():
@@ -133,7 +133,7 @@ def habit_menu(habit):
             print(f'[green]You successfully check in on {habit.check_dates[0]} for "{habit.name.capitalize()}" [/green]'
                   f'[green]which consists of "{habit.description}"[/green]')
         except sqlite3.IntegrityError:
-            print('[red]You have already checked "{habit.name.capitalize()}" for today[/red]')
+            print(f'[red]You have already checked "{habit.name.capitalize()}" for today[/red]')
         habit_menu(habit)
     elif choice == f'Delete "{habit.name}"':
         print(f'[green]"{habit.name.capitalize()}"[/green]', end=" ")

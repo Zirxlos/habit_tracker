@@ -18,7 +18,7 @@ def calculate_streak_daily(habit):
         else:
             current_streak = 1
 
-    if habit.check_dates and sorted_dates[0] != date.today():
+    if habit.check_dates and sorted_dates[-1] != date.today():
         current_streak = 0
 
     habit.longest_streak = longest_streak

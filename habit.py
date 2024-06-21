@@ -43,7 +43,6 @@ class Habit:
         cur = db.cursor()
         cur.execute("SELECT date FROM tracker WHERE habit_name=?", (self.name,))
         # transforming the result into a list of dates instead of a list of tuples with strings
-        # self.check_dates = list(map(lambda x: datetime.fromisoformat(x[0]).date(), cur.fetchall()))
         self.check_dates = [datetime.fromisoformat(row[0]).date() for row in cur.fetchall()]
 
     def calculate_streak(self):
