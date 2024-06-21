@@ -5,7 +5,6 @@ from analyse import strongest_weakest_habit
 import sqlite3
 from rich import print
 
-# db = get_db('test.db')
 # loading the whole database
 db = get_db()
 habits = get_habits(db)  # creating a global list

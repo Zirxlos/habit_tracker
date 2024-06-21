@@ -4,9 +4,9 @@ from analyse import calculate_streak_daily, calculate_streak_weekly
 
 class Habit:
     def __init__(self, name, description, periodicity):
-        self.name = name.lower()
+        self.name = name.lower()  # stores the name in lower case to be sure to avoid duplicate in the database
         self.description = description.lower()
-        self.periodicity = periodicity
+        self.periodicity = periodicity  # periodicity would be 1 for daily or 7 for weekly
         self.longest_streak = 0
         self.current_streak = 0
         self.check_dates = []
@@ -16,11 +16,22 @@ class Habit:
         return self.name == other.name
 
     def store(self, db):
+        """
+        method to store the habit into the habits table of the database
+        :param db: database to insert into
+        :return: void
+        """
         cur = db.cursor()
         cur.execute("INSERT INTO habits VALUES (?, ?, ?)", (self.name, self.description, self.periodicity))
         db.commit()
 
     def add_event(self, db, event_date: str = None):
+        """
+        method to add a check in date into the database and inside the check_dates list attribute of the habit
+        :param db: database to insert into
+        :param event_date: if no date inserted, will default to todays date
+        :return: void
+        """
         if not event_date:
             event_date = str(date.today())
         cur = db.cursor()
@@ -29,6 +40,11 @@ class Habit:
         db.commit()
 
     def delete_habit(self, db):
+        """
+        method to delete the habit from the database
+        :param db: database to delete from
+        :return: void
+        """
         cur = db.cursor()
         cur.execute("DELETE FROM tracker WHERE habit_name=?", (self.name,))
         cur.execute("DELETE FROM habits WHERE name=?", (self.name,))

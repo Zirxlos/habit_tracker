@@ -24,8 +24,6 @@ def calculate_streak_daily(habit):
     habit.longest_streak = longest_streak
     habit.current_streak = current_streak
 
-    return habit
-
 
 def calculate_streak_weekly(habit):
     """
@@ -70,8 +68,6 @@ def calculate_streak_weekly(habit):
 
     habit.longest_streak = longest_streak
     habit.current_streak = current_streak
-
-    return habit
 
 
 def strongest_weakest_habit(habits):
