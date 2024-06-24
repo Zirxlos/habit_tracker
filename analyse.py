@@ -3,10 +3,11 @@ from operator import attrgetter
 from habit import Habit
 
 
-def calculate_streak(habit):
+def calculate_streak(habit: Habit) -> list[int]:
     """
     function which computes streak of a Habit. A daily Habit must be made once per day and a weekly Habit must be
     done once per week between Monday and Friday.
+    :type habit: object
     :return: void, the Habit is returned by the called functions and updates the Habit instance
     """
     if not habit.check_dates:
@@ -19,7 +20,7 @@ def calculate_streak(habit):
         return calculate_streak_weekly(habit)
 
 
-def calculate_streak_daily(habit):
+def calculate_streak_daily(habit: Habit) -> list[int]:
     """
     Calculate the longest and current streak of a daily habit
     :param habit: daily habit to input
@@ -41,7 +42,7 @@ def calculate_streak_daily(habit):
     return [longest_streak, current_streak]
 
 
-def calculate_streak_weekly(habit):
+def calculate_streak_weekly(habit: Habit) -> list[int]:
     """
     computes the longest and current streak of a weekly Habit
     a habit needs to be completed at least every 7 days. If a habit is completed 8 times
@@ -85,7 +86,7 @@ def calculate_streak_weekly(habit):
     return [longest_streak, current_streak]
 
 
-def strongest_weakest_habit(habits):
+def strongest_weakest_habit(habits: list[Habit]) -> list[Habit]:
     """
     function to extract the habit with the highest streak ever
     :param habits:
@@ -98,7 +99,7 @@ def strongest_weakest_habit(habits):
     return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
 
 
-def get_habits(db, periodicity=None):
+def get_habits(db, periodicity: str = None) -> list[Habit]:
     """
     Function to obtain a list of Habit objects (daily, weekly or all of them) which is stored in the DB.
     :param periodicity: "daily" or "weekly". If no argument, or any other, default is to all habits.
