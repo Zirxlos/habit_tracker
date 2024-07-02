@@ -99,6 +99,34 @@ def strongest_weakest_habit(habits: list[Habit]) -> list[Habit]:
     return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
 
 
+def strongest_daily_habit(habits: list[Habit]) -> Habit:
+    daily_habits = [habit for habit in habits if habit.periodicity == 1]
+    for habit in daily_habits:
+        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+    return max(daily_habits, key=attrgetter('longest_streak'))
+
+
+def weakest_daily_habit(habits: list[Habit]) -> Habit:
+    daily_habits = [habit for habit in habits if habit.periodicity == 1]
+    for habit in daily_habits:
+        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+    return min(daily_habits, key=attrgetter('longest_streak'))
+
+
+def strongest_weekly_habit(habits: list[Habit]) -> Habit:
+    weekly_habits = [habit for habit in habits if habit.periodicity == 7]
+    for habit in weekly_habits:
+        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+    return max(weekly_habits, key=attrgetter('longest_streak'))
+
+
+def weakest_weekly_habit(habits: list[Habit]) -> Habit:
+    weekly_habits = [habit for habit in habits if habit.periodicity == 7]
+    for habit in weekly_habits:
+        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+    return min(weekly_habits, key=attrgetter('longest_streak'))
+
+
 def get_habits(db, periodicity: str = None) -> list[Habit]:
     """
     Function to obtain a list of Habit objects (daily, weekly or all of them) which is stored in the DB.
