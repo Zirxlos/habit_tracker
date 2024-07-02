@@ -1,7 +1,7 @@
 import questionary
 from habit import Habit
 from db import get_db
-from analyse import calculate_streak, strongest_weakest_habit, get_habits
+from analyse import calculate_streak, get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_weekly_habit, weakest_daily_habit
 import sqlite3
 from rich import print
 
@@ -60,22 +60,35 @@ def feedback():
     choice = questionary.select(
         "What do you want to do?",
         choices=[
-            "See my Weakest Habit",
-            "See my Strongest Habit",
+            "See my Strongest Daily Habit",
+            "See my Weakest Daily Habit",
+            "See my Strongest Weekly Habit",
+            "See my Weakest Weekly Habit",
             "Main Menu"
         ]
     ).ask()
 
-    if choice == "See my Weakest Habit":
-        weakest_habit = strongest_weakest_habit(habits)[1]
-        print(f'Your [blue]weakest habit[/blue] is [blue]"{weakest_habit.name.capitalize()}"[/blue] with a longest '
-              f'streak of [blue]{weakest_habit.longest_streak}[/blue]')
+    if choice == "See my Strongest Daily Habit":
+        strongest_day_habit = strongest_daily_habit(habits)
+        print(f'Your [green]strongest daily habit[/green] is [green]"{strongest_day_habit.name.capitalize()}"[/green] '
+              f'with a longest streak of [green]{strongest_day_habit.longest_streak}[/green]')
         main_menu()
-    elif choice == "See my Strongest Habit":
-        strongest_habit = strongest_weakest_habit(habits)[0]
+    elif choice == "See my Weakest Daily Habit":
+        weakest_day_habit = weakest_daily_habit(habits)
+        print(f'Your [blue]weakest daily habit[/blue] is [blue]"{weakest_day_habit.name.capitalize()}"[/blue] with '
+              f'a longest streak of [blue]{weakest_day_habit.longest_streak}[/blue]')
+        main_menu()
+    elif choice == "See my Strongest Weekly Habit":
+        strongest_week_habit = strongest_weekly_habit(habits)
         print(
-            f'Your [green]strongest habit[/green] is "{strongest_habit.name.capitalize()}" with a longest '
-            f'streak of [green]{strongest_habit.longest_streak}[/green]')
+            f'Your [green]strongest weekly habit[/green] is [green]"{strongest_week_habit.name.capitalize()}"[/green] '
+            f'with a longest streak of [green]{strongest_week_habit.longest_streak}[/green]')
+        main_menu()
+    elif choice == "See my Weakest Weekly Habit":
+        weakest_week_habit = weakest_weekly_habit(habits)
+        print(
+            f'Your [blue]weakest weekly habit[/blue] is [blue]"{weakest_week_habit.name.capitalize()}"[/blue] with a '
+            f'longest streak of [blue]{weakest_week_habit.longest_streak}[/blue]')
         main_menu()
     else:
         main_menu()
@@ -106,7 +119,7 @@ def see_habits(frequency=None):
     if choice == "Back":
         see_habits()
 
-    for habit in get_habits(db):
+    for habit in habits:
         if choice == habit.name.capitalize():
             habit.get_habit_data(db)
             habit_menu(habit)
