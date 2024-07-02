@@ -30,7 +30,13 @@ python main.py
 and follow instructions on screen.
 
 ## Tests
+The app comes with test.
+Please navigate to the project to run them and then run the following test script:
 
 ```
 pytest .
 ```
+
+Make sure all tests pass.
+
+N.B: Make sure you have python 3.x installed
