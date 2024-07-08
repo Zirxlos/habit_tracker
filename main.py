@@ -33,7 +33,7 @@ def main_menu():
         db.close()
         exit()
 
-
+# !!!!!!!!!!! THINK ABOUT IF USER PUTS A NUMBER/NON VALID NAME !!!!!!!!!!
 def create_habit():
     name = questionary.text("What is the name of your habit?").ask()
     description = questionary.text('Please insert a description:').ask()
