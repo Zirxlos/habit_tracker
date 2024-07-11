@@ -33,10 +33,16 @@ def main_menu():
         db.close()
         exit()
 
-# !!!!!!!!!!! THINK ABOUT IF USER PUTS A NUMBER/NON VALID NAME !!!!!!!!!!
+
 def create_habit():
     name = questionary.text("What is the name of your habit?").ask()
+    while not name.isalpha():
+        print("Your habit name can only include alphabetic characters.")
+        name = questionary.text("What is the name of your habit?").ask()
     description = questionary.text('Please insert a description:').ask()
+    while not description or description.isdigit():
+        print("You must have a description which is a combination of letters or a combination of letters and numbers.")
+        description = questionary.text('Please insert a description:').ask()
     periodicity = questionary.select("How often do you want to do this habit?", choices=["Daily", "Weekly"]).ask()
 
     if periodicity == "Daily":
