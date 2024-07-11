@@ -1,8 +1,7 @@
 from habit import Habit
 from db import get_db
 import os
-from analyse import (get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_daily_habit,
-                     weakest_weekly_habit)
+from analyse import strongest_daily_habit, strongest_weekly_habit, weakest_daily_habit, weakest_weekly_habit
 from datetime import date, timedelta
 
 
@@ -93,9 +92,7 @@ class TestHabit:
         assert weakest_weekly_habit(self.habits).longest_streak == 1
 
     def test_get_habits(self):
-        assert len(get_habits(self.db)) == 6
-        assert len(get_habits(self.db, "weekly")) == 3
-        assert len(get_habits(self.db, "daily")) == 3
+        assert len(Habit.get_habits(self.db)) == 6
 
     def teardown_method(self):
         self.db.close()

@@ -1,23 +1,10 @@
+from __future__ import annotations
 from datetime import timedelta, date
 from operator import attrgetter
-from habit import Habit
+from typing import TYPE_CHECKING
 
-
-def calculate_streak(habit: Habit) -> list[int]:
-    """
-    function which computes streak of a Habit. A daily Habit must be made once per day and a weekly Habit must be
-    done once per week between Monday and Friday.
-    :type habit: object
-    :return: void, the Habit is returned by the called functions and updates the Habit instance
-    """
-    if not habit.check_dates:
-        longest_streak = 0
-        current_streak = 0
-        return [longest_streak, current_streak]
-    elif habit.periodicity == 1:
-        return calculate_streak_daily(habit)
-    else:
-        return calculate_streak_weekly(habit)
+if TYPE_CHECKING:
+    from habit import Habit
 
 
 def calculate_streak_daily(habit: Habit) -> list[int]:
@@ -95,28 +82,37 @@ def strongest_weakest_habit(habits: list[Habit]) -> list[Habit]:
     """
     # habits = hb.get_habits(db)
     for habit in habits:
-        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+        habit.calculate_streak()
     return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
 
 
 def strongest_daily_habit(habits: list[Habit]) -> Habit:
     daily_habits = [habit for habit in habits if habit.periodicity == 1]
+    compute_streaks_for_a_list_of_habits(daily_habits)
     return max(daily_habits, key=attrgetter('longest_streak'))
 
 
 def weakest_daily_habit(habits: list[Habit]) -> Habit:
     daily_habits = [habit for habit in habits if habit.periodicity == 1]
+    compute_streaks_for_a_list_of_habits(daily_habits)
     return min(daily_habits, key=attrgetter('longest_streak'))
 
 
 def strongest_weekly_habit(habits: list[Habit]) -> Habit:
     weekly_habits = [habit for habit in habits if habit.periodicity == 7]
+    compute_streaks_for_a_list_of_habits(weekly_habits)
     return max(weekly_habits, key=attrgetter('longest_streak'))
 
 
 def weakest_weekly_habit(habits: list[Habit]) -> Habit:
     weekly_habits = [habit for habit in habits if habit.periodicity == 7]
+    compute_streaks_for_a_list_of_habits(weekly_habits)
     return min(weekly_habits, key=attrgetter('longest_streak'))
+
+
+def compute_streaks_for_a_list_of_habits(habits: list[Habit]):
+    for habit in habits:
+        habit.calculate_streak()
 
 
 def get_habits(db, periodicity: str = None) -> list[Habit]:

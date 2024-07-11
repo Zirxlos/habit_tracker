@@ -75,3 +75,14 @@ class Habit:
             self.longest_streak, self.current_streak = calculate_streak_daily(self)
         else:
             self.longest_streak, self.current_streak = calculate_streak_weekly(self)
+
+    @classmethod
+    def get_habits(cls, db):
+        """
+        Class method to obtain a list of objects (daily, weekly or all of them) which is stored in the DB.
+        :param periodicity:
+        :return:
+        """
+        cur = db.cursor()
+        cur.execute("SELECT name, description, periodicity FROM habits")
+        return [cls(*item) for item in [row for row in cur.fetchall()]]

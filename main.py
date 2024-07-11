@@ -1,13 +1,13 @@
 import questionary
 from habit import Habit
 from db import get_db
-from analyse import get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_weekly_habit, weakest_daily_habit
+from analyse import strongest_daily_habit, strongest_weekly_habit, weakest_weekly_habit, weakest_daily_habit
 import sqlite3
 from rich import print
 
 # loading the whole database
 db = get_db()
-habits = get_habits(db)  # creating a global list
+habits = Habit.get_habits(db)  # creating a global list
 for item in habits:
     item.get_habit_data(db)  # loading all the checked in dates
 
