@@ -1,7 +1,7 @@
 from habit import Habit
 from db import get_db
 import os
-from analyse import (get_habits, calculate_streak, strongest_daily_habit, strongest_weekly_habit, weakest_daily_habit,
+from analyse import (get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_daily_habit,
                      weakest_weekly_habit)
 from datetime import date, timedelta
 
@@ -46,7 +46,6 @@ class TestHabit:
         for i in range(0, 21, 2):
             self.test_weakest_daily_habit.add_event(self.db, str(date.today() - timedelta(days=i)))
 
-
     def test_habit(self):
         habit1 = Habit("test_habit_1", "test_description_1", 1)
         habit2 = Habit("test_habit_2", "test_description_2", 7)
@@ -62,36 +61,29 @@ class TestHabit:
         assert len(self.test_strongest_weekly_habit.check_dates) == 21
 
     def test_calculate_streak(self):
-        (self.test_daily_habit.longest_streak,
-         self.test_daily_habit.current_streak) = calculate_streak(self.test_daily_habit)
+        self.test_daily_habit.calculate_streak()
         assert self.test_daily_habit.longest_streak == 19
         assert self.test_daily_habit.current_streak == 0
 
-        (self.test_weekly_habit.longest_streak,
-         self.test_weekly_habit.current_streak) = calculate_streak(self.test_weekly_habit)
+        self.test_weekly_habit.calculate_streak()
         assert self.test_weekly_habit.longest_streak == 2
         assert self.test_weekly_habit.current_streak == 0
 
-        (self.test_strongest_weekly_habit.longest_streak,
-         self.test_strongest_weekly_habit.current_streak) = calculate_streak(self.test_strongest_weekly_habit)
+        self.test_strongest_weekly_habit.calculate_streak()
         assert self.test_strongest_weekly_habit.longest_streak == 4
         assert self.test_strongest_weekly_habit.current_streak == 4
 
-        (self.test_strongest_daily_habit.longest_streak,
-         self.test_strongest_daily_habit.current_streak) = calculate_streak(self.test_strongest_daily_habit)
+        self.test_strongest_daily_habit.calculate_streak()
         assert self.test_strongest_daily_habit.longest_streak == 21
         assert self.test_strongest_daily_habit.current_streak == 21
 
-        (self.test_weakest_weekly_habit.longest_streak,
-         self.test_weakest_weekly_habit.current_streak) = calculate_streak(self.test_weakest_weekly_habit)
+        self.test_weakest_weekly_habit.calculate_streak()
         assert self.test_weakest_weekly_habit.longest_streak == 1
         assert self.test_weakest_weekly_habit.current_streak == 0
 
-        (self.test_weakest_daily_habit.longest_streak,
-         self.test_weakest_daily_habit.current_streak) = calculate_streak(self.test_weakest_daily_habit)
+        self.test_weakest_daily_habit.calculate_streak()
         assert self.test_weakest_daily_habit.longest_streak == 1
         assert self.test_weakest_daily_habit.current_streak == 1
-
 
     def test_strongest_and_weakest_habits(self):
         assert strongest_daily_habit(self.habits).longest_streak == 21
@@ -99,7 +91,6 @@ class TestHabit:
 
         assert strongest_weekly_habit(self.habits).longest_streak == 4
         assert weakest_weekly_habit(self.habits).longest_streak == 1
-
 
     def test_get_habits(self):
         assert len(get_habits(self.db)) == 6

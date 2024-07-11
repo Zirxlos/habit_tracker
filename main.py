@@ -1,7 +1,7 @@
 import questionary
 from habit import Habit
 from db import get_db
-from analyse import calculate_streak, get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_weekly_habit, weakest_daily_habit
+from analyse import get_habits, strongest_daily_habit, strongest_weekly_habit, weakest_weekly_habit, weakest_daily_habit
 import sqlite3
 from rich import print
 
@@ -163,11 +163,11 @@ def habit_menu(habit):
         print('[green]successfully deleted[/green]')
         see_habits()
     elif choice == f'See Current Streak of "{habit_name}"':
-        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+        habit.calculate_streak()
         print(f'[green]The current streak of "{habit_name}" is {habit.current_streak}[/green]')
         habit_menu(habit)
     elif choice == f'See Longest Streak of "{habit_name}"':
-        habit.longest_streak, habit.current_streak = calculate_streak(habit)
+        habit.calculate_streak()
         print(f'[green]The longest streak of "{habit_name}" is {habit.longest_streak}[/green]')
         habit_menu(habit)
     elif choice == f'See description of "{habit_name}"':
