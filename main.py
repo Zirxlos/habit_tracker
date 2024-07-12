@@ -13,6 +13,12 @@ for item in habits:
 
 
 def main_menu():
+    """
+    Display the main menu and handle user choice.
+
+    Provides options for creating a habit, getting feedback on habits, seeing habits, or exiting the program.
+    Calls the appropriate function based on the user's choice.
+    """
     choice = questionary.select(
         "What do you want to do?",
         choices=[
@@ -35,6 +41,13 @@ def main_menu():
 
 
 def create_habit():
+    """
+    Create a new habit by prompting the user for details and storing it in the database.
+
+    Prompts the user for the habit's name, description, and periodicity (daily or weekly). Validates input and
+    stores the new habit in the database and the global habits list. Displays a message indicating success or
+    failure.
+    """
     name = questionary.text("What is the name of your habit?").ask()
     while not name.isalpha():
         print("Your habit name can only include alphabetic characters.")
@@ -63,6 +76,12 @@ def create_habit():
 
 
 def feedback():
+    """
+    Provide feedback on the user's habits by displaying their strongest and weakest habits.
+
+    Prompts the user to choose between viewing their strongest or weakest daily and weekly habits.
+    Calls the appropriate function based on the user's choice and displays the results.
+    """
     choice = questionary.select(
         "What do you want to do?",
         choices=[
@@ -101,6 +120,16 @@ def feedback():
 
 
 def see_habits(frequency=None):
+    """
+    Display the user's habits based on the specified frequency or all habits if no frequency is specified.
+
+    Prompts the user to choose between viewing daily habits, weekly habits, or all habits.
+    Calls the appropriate function based on the user's choice and displays the selected habits.
+    Calls itself with "daily" or "weekly" as argument to refine display.
+
+    :param frequency: The frequency of habits to display ("daily" or "weekly"). Defaults to None.
+
+    """
     if frequency is None:
         list_of_choices = ["Show daily habits", "Show weekly habits"] + [habit.name.capitalize() for habit in
                                                                          habits] + ["Main Menu"]
@@ -135,6 +164,14 @@ def see_habits(frequency=None):
 
 
 def habit_menu(habit):
+    """
+    Display the habit menu and handle user choice for the selected habit.
+
+    Provides options for completing, deleting, viewing the current streak, viewing the longest streak,
+    or viewing the description of the selected habit. Calls the appropriate function based on the user's choice.
+
+    :param habit: The habit object for which the menu is displayed.
+    """
     habit_name = habit.name.capitalize()
     choice = questionary.select(
         "What do you want to do?",

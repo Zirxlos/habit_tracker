@@ -9,9 +9,15 @@ if TYPE_CHECKING:
 
 def calculate_streak_daily(habit: Habit) -> list[int]:
     """
-    Calculate the longest and current streak of a daily habit
-    :param habit: daily habit to input
-    :return: the longest streak of uninterrupted check-in of the habit
+    Calculates the longest and current streak of a daily habit.
+
+    This function determines the longest streak of uninterrupted check-ins for
+    a daily habit. It also calculates the current streak up to the most recent
+    check-in date.
+
+    :param habit: A Habit class object representing the daily habit for which the streaks are calculated.
+
+    :return: A list containing the longest streak and the current streak of the habit.
     """
     sorted_dates = sorted(habit.check_dates)
     longest_streak = 1
@@ -31,11 +37,15 @@ def calculate_streak_daily(habit: Habit) -> list[int]:
 
 def calculate_streak_weekly(habit: Habit) -> list[int]:
     """
-    computes the longest and current streak of a weekly Habit
-    a habit needs to be completed at least every 7 days. If a habit is completed 8 times
-    8 days in a row, it will compute a streak of 2
-    :param habit: Habit class object from which we want to get the longest and current streak
-    :return:
+    Computes the longest and current streak of a weekly Habit.
+
+    A habit needs to be completed at least once every 7 days to maintain a streak.
+    For example, if a habit is completed 8 times in 8 consecutive days, it will
+    compute a streak of 2.
+
+    :param habit: A Habit class object for which the longest and current streak are to be calculated.
+
+    :return: A list containing the longest streak and the current streak.
     """
     sorted_dates = sorted(habit.check_dates)
     longest_streak = 0
@@ -73,60 +83,85 @@ def calculate_streak_weekly(habit: Habit) -> list[int]:
     return [longest_streak, current_streak]
 
 
-def strongest_weakest_habit(habits: list[Habit]) -> list[Habit]:
-    """
-    function to extract the habit with the highest streak ever
-    :param habits:
-    :return: a list with the habit with the max "longest_streak" at index 0 and the habit with the min "longest_streak"
-    at index 1
-    """
-    # habits = hb.get_habits(db)
-    for habit in habits:
-        habit.calculate_streak()
-    return [max(habits, key=attrgetter('longest_streak')), min(habits, key=attrgetter('longest_streak'))]
-
-
 def strongest_daily_habit(habits: list[Habit]) -> Habit:
+    """
+    Determines the strongest daily habit based on the longest streak.
+
+    This function filters the given list of habits to only include those with a
+    periodicity of 1 (daily habits). It then computes the streaks for these daily
+    habits and returns the habit with the longest streak.
+
+    :param habits: A list of Habit objects to be evaluated.
+
+    :return: The Habit object with the longest streak among the daily habits.
+    """
     daily_habits = [habit for habit in habits if habit.periodicity == 1]
     compute_streaks_for_a_list_of_habits(daily_habits)
     return max(daily_habits, key=attrgetter('longest_streak'))
 
 
 def weakest_daily_habit(habits: list[Habit]) -> Habit:
+    """
+    Determines the weakest daily habit based on the shortest streak.
+
+    This function filters the given list of habits to only include those with a
+    periodicity of 1 (daily habits). It then computes the streaks for these daily
+    habits and returns the habit with the shortest streak.
+
+    :param habits: A list of Habit objects to be evaluated.
+
+    :return: The Habit object with the shortest streak among the daily habits.
+    """
     daily_habits = [habit for habit in habits if habit.periodicity == 1]
     compute_streaks_for_a_list_of_habits(daily_habits)
     return min(daily_habits, key=attrgetter('longest_streak'))
 
 
 def strongest_weekly_habit(habits: list[Habit]) -> Habit:
+    """
+    Determines the strongest weekly habit based on the longest streak.
+
+    This function filters the given list of habits to only include those with a
+    periodicity of 7 (weekly habits). It then computes the streaks for these weekly
+    habits and returns the habit with the longest streak.
+
+    :param habits: A list of Habit objects to be evaluated.
+
+    :return: The Habit object with the longest streak among the weekly habits.
+    """
     weekly_habits = [habit for habit in habits if habit.periodicity == 7]
     compute_streaks_for_a_list_of_habits(weekly_habits)
     return max(weekly_habits, key=attrgetter('longest_streak'))
 
 
 def weakest_weekly_habit(habits: list[Habit]) -> Habit:
+    """
+    Determines the weakest weekly habit based on the shortest streak.
+
+    This function filters the given list of habits to only include those with a
+    periodicity of 7 (weekly habits). It then computes the streaks for these weekly
+    habits and returns the habit with the shortest streak.
+
+    :param habits: A list of Habit objects to be evaluated.
+
+    :return: The Habit object with the shortest streak among the weekly habits.
+    """
     weekly_habits = [habit for habit in habits if habit.periodicity == 7]
     compute_streaks_for_a_list_of_habits(weekly_habits)
     return min(weekly_habits, key=attrgetter('longest_streak'))
 
 
 def compute_streaks_for_a_list_of_habits(habits: list[Habit]):
+    """
+    Computes the streaks for a list of habits.
+
+    This function iterates over the given list of habits and calculates the
+    streak for each habit by calling the `calculate_streak` method on each Habit
+    object.
+
+    :param habits: A list of Habit objects for which streaks need to be calculated.
+
+    :return: None
+    """
     for habit in habits:
         habit.calculate_streak()
-
-
-def get_habits(db, periodicity: str = None) -> list[Habit]:
-    """
-    Function to obtain a list of Habit objects (daily, weekly or all of them) which is stored in the DB.
-    :param periodicity: "daily" or "weekly". If no argument, or any other, default is to all habits.
-    :param db: database to search
-    :return: a list of Habit objects
-    """
-    cur = db.cursor()
-    if periodicity == "daily":
-        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 1")
-    elif periodicity == "weekly":
-        cur.execute("SELECT name, description, periodicity FROM habits WHERE periodicity = 7")
-    else:
-        cur.execute("SELECT name, description, periodicity FROM habits")
-    return [Habit(*item) for item in [row for row in cur.fetchall()]]

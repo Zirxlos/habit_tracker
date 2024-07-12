@@ -6,8 +6,15 @@ from datetime import date, timedelta
 
 
 class TestHabit:
+    """
+    Test suite for the Habit class and its methods.
+    """
 
     def setup_method(self):
+        """
+        Setup method to initialize the test database and test habits.
+        This method creates a test database and populates it with multiple habits and events.
+        """
         self.db = get_db("test.db")
         self.habits = []
         self.test_daily_habit = Habit("test_daily_habit", "test_daily_habit_desc", 1)
@@ -45,21 +52,33 @@ class TestHabit:
         for i in range(0, 21, 2):
             self.test_weakest_daily_habit.add_event(self.db, str(date.today() - timedelta(days=i)))
 
-    def test_habit(self):
-        habit1 = Habit("test_habit_1", "test_description_1", 1)
-        habit2 = Habit("test_habit_2", "test_description_2", 7)
-
-        habit1.store(self.db)
-        habit2.store(self.db)
-
-    def test_db_habit(self):
+    def test_get_habit_data(self):
+        """
+        Test the get_habit_data method to ensure it retrieves the correct check-in dates.
+        """
         self.test_daily_habit.get_habit_data(self.db)
         assert len(self.test_daily_habit.check_dates) == 19
 
         self.test_strongest_weekly_habit.get_habit_data(self.db)
         assert len(self.test_strongest_weekly_habit.check_dates) == 21
 
+    def test_delete_habit(self):
+        """
+        Test the delete_habit method to ensure habits are removed from the database correctly.
+        """
+        self.test_daily_habit.delete_habit(self.db)
+        self.test_strongest_weekly_habit.delete_habit(self.db)
+        self.test_strongest_daily_habit.delete_habit(self.db)
+        self.test_weakest_weekly_habit.delete_habit(self.db)
+        self.test_weakest_daily_habit.delete_habit(self.db)
+        self.test_weekly_habit.delete_habit(self.db)
+        assert len(Habit.get_habits(self.db)) == 0
+
     def test_calculate_streak(self):
+        """
+        Test the calculate_streak method to verify the longest and current streak calculations for daily
+        and weekly habits.
+        """
         self.test_daily_habit.calculate_streak()
         assert self.test_daily_habit.longest_streak == 19
         assert self.test_daily_habit.current_streak == 0
@@ -85,6 +104,9 @@ class TestHabit:
         assert self.test_weakest_daily_habit.current_streak == 1
 
     def test_strongest_and_weakest_habits(self):
+        """
+        Test the functions to find the strongest and weakest habits for both daily and weekly habits.
+        """
         assert strongest_daily_habit(self.habits).longest_streak == 21
         assert weakest_daily_habit(self.habits).longest_streak == 1
 
@@ -92,8 +114,14 @@ class TestHabit:
         assert weakest_weekly_habit(self.habits).longest_streak == 1
 
     def test_get_habits(self):
+        """
+        Test the get_habits class method to ensure it retrieves all habits from the database.
+        """
         assert len(Habit.get_habits(self.db)) == 6
 
     def teardown_method(self):
+        """
+        Teardown method to close the database connection and remove the test database file.
+        """
         self.db.close()
         os.remove("test.db")
